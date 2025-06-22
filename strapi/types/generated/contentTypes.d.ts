@@ -403,6 +403,63 @@ export interface ApiBlogPostBlogPost extends Struct.CollectionTypeSchema {
   };
 }
 
+export interface ApiHeroTagHeroTag extends Struct.CollectionTypeSchema {
+  collectionName: 'hero_tags';
+  info: {
+    displayName: 'Hero Tag';
+    pluralName: 'hero-tags';
+    singularName: 'hero-tag';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    image: Schema.Attribute.Media<'images' | 'files' | 'videos' | 'audios'>;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<
+      'oneToMany',
+      'api::hero-tag.hero-tag'
+    > &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    tagLine: Schema.Attribute.Blocks;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
+export interface ApiHeroHero extends Struct.CollectionTypeSchema {
+  collectionName: 'heroes';
+  info: {
+    displayName: 'Hero';
+    pluralName: 'heroes';
+    singularName: 'hero';
+  };
+  options: {
+    draftAndPublish: true;
+  };
+  attributes: {
+    createdAt: Schema.Attribute.DateTime;
+    createdBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+    heroImage: Schema.Attribute.Media<
+      'images' | 'files' | 'videos' | 'audios',
+      true
+    >;
+    locale: Schema.Attribute.String & Schema.Attribute.Private;
+    localizations: Schema.Attribute.Relation<'oneToMany', 'api::hero.hero'> &
+      Schema.Attribute.Private;
+    publishedAt: Schema.Attribute.DateTime;
+    updatedAt: Schema.Attribute.DateTime;
+    updatedBy: Schema.Attribute.Relation<'oneToOne', 'admin::user'> &
+      Schema.Attribute.Private;
+  };
+}
+
 export interface ApiProjectProject extends Struct.CollectionTypeSchema {
   collectionName: 'projects';
   info: {
@@ -954,6 +1011,8 @@ declare module '@strapi/strapi' {
       'admin::transfer-token-permission': AdminTransferTokenPermission;
       'admin::user': AdminUser;
       'api::blog-post.blog-post': ApiBlogPostBlogPost;
+      'api::hero-tag.hero-tag': ApiHeroTagHeroTag;
+      'api::hero.hero': ApiHeroHero;
       'api::project.project': ApiProjectProject;
       'plugin::content-releases.release': PluginContentReleasesRelease;
       'plugin::content-releases.release-action': PluginContentReleasesReleaseAction;

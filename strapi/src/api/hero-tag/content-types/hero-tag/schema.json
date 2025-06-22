@@ -1,0 +1,27 @@
+{
+  "kind": "collectionType",
+  "collectionName": "hero_tags",
+  "info": {
+    "singularName": "hero-tag",
+    "pluralName": "hero-tags",
+    "displayName": "Hero Tag"
+  },
+  "options": {
+    "draftAndPublish": true
+  },
+  "attributes": {
+    "image": {
+      "allowedTypes": [
+        "images",
+        "files",
+        "videos",
+        "audios"
+      ],
+      "type": "media",
+      "multiple": false
+    },
+    "tagLine": {
+      "type": "blocks"
+    }
+  }
+}

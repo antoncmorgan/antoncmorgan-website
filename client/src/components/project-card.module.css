@@ -1,0 +1,103 @@
+/* Project Card styles extracted from home.module.css */
+
+.projectCard {
+  display: flex;
+  flex-direction: row;
+  gap: 2rem;
+  padding: 32px 24px;
+  align-items: center;
+}
+
+.projectCard:nth-child(even) {
+  flex-direction: row-reverse;
+}
+
+.projectImage img {
+  max-width: 400px;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.projectContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.projectContent h3 {
+  font-family: var(--heading-font);
+  font-size: 1.4rem;
+  margin: 0 0 0.5rem 0;
+}
+
+.projectContent p {
+  font-family: var(--body-font);
+  margin: 0 0 1rem 0;
+  color: #222;
+}
+
+.techIcons {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.techIcons img {
+  margin-right: 10px;
+  font-size: 1.5rem;
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.buttonRow {
+  display: flex;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.button {
+  display: inline-block;
+  background: #e0e0e0;
+  color: #222;
+  padding: 10px 20px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-family: var(--heading-font);
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+  font-size: 1rem;
+}
+
+.button:hover {
+  background: #bdbdbd;
+}
+
+.primaryButton {
+  background: var(--primary);
+  color: #fff;
+}
+
+.primaryButton:hover {
+  background: #0097a7;
+}
+
+@media (max-width: 900px) {
+  .projectCard, .projectsList {
+    flex-direction: column !important;
+    gap: 1.5rem;
+    padding: 20px 8px;
+  }
+  .projectImage img {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 600px) {
+  .projectCard {
+    padding: 12px 2px;
+  }
+}
