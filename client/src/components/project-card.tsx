@@ -5,9 +5,10 @@ import { Project } from '../types';
 interface Props {
   project: Project;
   index?: number; // To alternate layout
+  strapiUrl: string;
 }
 
-const ProjectCard = ({ project, index = 0 }: Props) => {
+const ProjectCard = ({ project, index = 0, strapiUrl }: Props) => {
   const mainImage = project.Image?.[0];
   const imageUrl = mainImage?.formats?.medium?.url || mainImage?.url;
   const icons = project.Icons || [];
@@ -21,7 +22,7 @@ const ProjectCard = ({ project, index = 0 }: Props) => {
       <div className={styles.projectImage}>
         {imageUrl && (
           <img
-            src={imageUrl.startsWith('http') ? imageUrl : `http://localhost:1337${imageUrl}`}
+            src={imageUrl.startsWith('http') ? imageUrl : `${strapiUrl}${imageUrl}`}
             alt={mainImage?.name || project.Title}
             className={styles.tiltedImage}
           />
@@ -38,7 +39,7 @@ const ProjectCard = ({ project, index = 0 }: Props) => {
           {icons.map(icon => (
             <img
               key={icon.id}
-              src={icon.url.startsWith('http') ? icon.url : `http://localhost:1337${icon.url}`}
+              src={icon.url.startsWith('http') ? icon.url : `${strapiUrl}${icon.url}`}
               alt={icon.name}
               width={32}
               height={32}

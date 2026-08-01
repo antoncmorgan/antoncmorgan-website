@@ -2,6 +2,14 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+  --heading-font: 'Montserrat', Arial, Helvetica, sans-serif;
+  --body-font: 'Open Sans', Arial, Helvetica, sans-serif;
+  --primary: #00bcd4;
+  --accent-green: #00d084;
+  --accent-yellow: #ffc107;
+  --accent-bg: #DFFB4A;
+  --footer-bg: #00bcd4;
+  --gray: #666;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -23,9 +31,9 @@ body {
 }
 
 body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
+  color: #222;
+  background: #f7f7f7;
+  font-family: var(--body-font);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   transition: background 0.3s, color 0.3s;
