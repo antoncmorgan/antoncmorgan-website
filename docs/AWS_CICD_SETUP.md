@@ -23,15 +23,32 @@ The workflow deploys only on a push to `main`, which is produced when a pull req
 
 There are currently no unit or system test scripts in either application. The validation workflow deliberately uses `--if-present`; add those scripts as tests are introduced, and make the `Validate` workflow a required pull-request check.
 
-## One-time AWS setup
+## Automated one-time setup
 
-1. **Networking:** create a VPC across at least two Availability Zones. Put RDS in private subnets. Create an App Runner VPC connector with access to those subnets and allow its security group to reach RDS on PostgreSQL port 5432. Do not make RDS publicly accessible.
-2. **Database:** create an encrypted RDS PostgreSQL instance, enable automated backups, deletion protection, and Performance Insights. Create the Strapi database and user. Import or migrate the existing local SQLite content before cutover. The workflow makes an additional *manual* RDS snapshot before every deployment; configure an EventBridge/Lambda retention policy to remove aged manual snapshots.
-3. **Media:** create an encrypted S3 bucket with versioning enabled. Create a CloudFront distribution with Origin Access Control for the bucket and set its domain as `AWS_S3_BASE_URL`. Grant the App Runner instance role only `s3:GetObject`, `s3:PutObject`, and `s3:DeleteObject` on that bucket's objects. Keep the bucket private.
-4. **Container registry:** create a private ECR repository for Strapi. Create an App Runner service from its `latest` image, configured for **manual** deployments, port `1337`, and the health endpoint appropriate for the service. Configure its ECR access role to pull that repository.
-5. **App Runner configuration:** inject the values below from Secrets Manager or as non-secret environment variables. Use the App Runner VPC connector and attach the S3 instance role. Set a custom API domain and HTTPS certificate.
-6. **Amplify:** create an Amplify Hosting app and its `main` branch. Set the app root to `client`, Node.js to 22, and use `npm ci` then `npm run build`. Set `STRAPI_URL` to the HTTPS App Runner API URL. Configure the public website domain and HTTPS certificate.
-7. **Observability:** retain App Runner logs in CloudWatch and create alarms for App Runner deployment failures, HTTP 5xx responses, RDS CPU/storage/connections, and Amplify deployment failures.
+`scripts/bootstrap-aws.sh` provisions the ECR repository, private/versioned/encrypted media bucket, CloudFront Origin Access Control and distribution, private RDS PostgreSQL database, App Runner VPC connector and service, Amplify app and `main` branch, Strapi Secrets Manager values, and the GitHub Actions OIDC deployment role. It also builds and publishes the initial Strapi image, then prints the six values to add to the GitHub `production` environment.
+
+Install and authenticate AWS CLI v2, Docker, and OpenSSL on a trusted machine. The GitHub personal access token used for Amplify must have access to this repository; the script does not write it to disk or print it. Provide an existing VPC and at least two **private** subnets. Those subnets need NAT access or suitable VPC endpoints for the running service to access AWS APIs. The script creates the App Runner and database security groups and permits PostgreSQL access only from App Runner.
+
+```bash
+export PROJECT_NAME=antoncmorgan
+export AWS_REGION=eu-west-2
+export GITHUB_REPOSITORY=antoncmorgan/antoncmorgan-website
+export VPC_ID=vpc-0123456789abcdef0
+export PRIVATE_SUBNET_IDS=subnet-0123456789abcdef0,subnet-0123456789abcdef1
+
+./scripts/bootstrap-aws.sh
+```
+
+The script securely prompts for the PostgreSQL master password and Amplify GitHub access token. `PROJECT_NAME` must contain only lowercase letters, numbers, and hyphens. To use a different database size or name, set `DATABASE_INSTANCE_CLASS`, `DATABASE_NAME`, or `DATABASE_USERNAME` before running it. Re-running it preserves existing secrets and resources, but do not use it as a database migration tool.
+
+After it completes, configure custom domains/certificates, CloudWatch alarms, snapshot-retention cleanup, and import existing SQLite content before enabling production traffic.
+
+## Manual configuration after bootstrap
+
+1. **Networking:** create the VPC and supply two or more private subnet IDs to the script. Confirm that those subnets span at least two Availability Zones and provide the required NAT gateway or VPC endpoints. Do not make RDS publicly accessible.
+2. **Database:** import or migrate the existing local SQLite content before cutover. The workflow makes an additional *manual* RDS snapshot before every deployment; configure an EventBridge/Lambda retention policy to remove aged manual snapshots.
+3. **Domains:** configure custom API, website, and media domains and their HTTPS certificates after the default App Runner, Amplify, and CloudFront endpoints have been verified.
+4. **Observability:** retain App Runner logs in CloudWatch and create alarms for App Runner deployment failures, HTTP 5xx responses, RDS CPU/storage/connections, and Amplify deployment failures.
 
 ## App Runner environment
 
