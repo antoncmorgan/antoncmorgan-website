@@ -23,6 +23,15 @@ The workflow deploys only on a push to `main`, which is produced when a pull req
 
 There are currently no unit or system test scripts in either application. The validation workflow deliberately uses `--if-present`; add those scripts as tests are introduced, and make the `Validate` workflow a required pull-request check.
 
+## Complete setup checklist
+
+1. Select the production AWS account and region, install and authenticate [AWS CLI v2](https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html), and install Docker and OpenSSL on the trusted operator machine.
+2. Create or select a VPC with two private subnets in separate Availability Zones and provide their required [private-subnet egress](https://docs.aws.amazon.com/vpc/latest/userguide/vpc-nat-gateway.html).
+3. Create a repository-scoped [GitHub personal access token](https://docs.github.com/authentication/keeping-your-account-and-data-secure/managing-your-personal-access-tokens) for Amplify, then run [`scripts/bootstrap-aws.sh`](../scripts/bootstrap-aws.sh) with the inputs below.
+4. Add the script's printed values to the protected GitHub `production` environment and retain its OIDC restrictions; see [GitHub environments](https://docs.github.com/actions/reference/workflows-and-actions/deployments-and-environments) and [AWS OIDC configuration](https://docs.github.com/actions/how-tos/secure-your-work/security-harden-deployments/oidc-in-aws).
+5. Migrate the existing SQLite content, configure domains and [ACM certificates](https://docs.aws.amazon.com/acm/latest/userguide/gs-acm-request-public.html), and set the App Runner CORS origin and frontend Strapi URL to the production domains.
+6. Configure the listed CloudWatch alarms and snapshot retention, then merge a validated conventional-commit pull request and approve the first production deployment.
+
 ## Automated one-time setup
 
 `scripts/bootstrap-aws.sh` provisions the ECR repository, private/versioned/encrypted media bucket, CloudFront Origin Access Control and distribution, private RDS PostgreSQL database, App Runner VPC connector and service, Amplify app and `main` branch, Strapi Secrets Manager values, and the GitHub Actions OIDC deployment role. It also builds and publishes the initial Strapi image, then prints the six values to add to the GitHub `production` environment.
