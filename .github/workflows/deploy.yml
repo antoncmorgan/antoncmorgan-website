@@ -68,21 +68,17 @@ jobs:
             strapi
           docker push "$image:$GITHUB_SHA"
           docker push "$image:latest"
-      - name: Deploy Strapi to App Runner
+      - name: Deploy Strapi to ECS Express Mode
         env:
-          SERVICE_ARN: ${{ vars.AWS_APP_RUNNER_SERVICE_ARN }}
+          SERVICE_ARN: ${{ vars.AWS_ECS_SERVICE_ARN }}
+          ECR_REGISTRY: ${{ steps.ecr-login.outputs.registry }}
+          ECR_REPOSITORY: ${{ vars.AWS_ECR_REPOSITORY }}
         run: |
-          operation_id="$(aws apprunner start-deployment --service-arn "$SERVICE_ARN" --query 'OperationId' --output text)"
-          for _ in {1..30}; do
-            status="$(aws apprunner list-operations --service-arn "$SERVICE_ARN" --query "OperationSummaryList[?Id=='$operation_id'].Status | [0]" --output text)"
-            case "$status" in
-              SUCCEEDED) exit 0 ;;
-              FAILED|ROLLBACK_FAILED) echo "App Runner deployment $status" >&2; exit 1 ;;
-            esac
-            sleep 20
-          done
-          echo "Timed out waiting for App Runner deployment" >&2
-          exit 1
+          aws ecs update-express-gateway-service \
+            --service-arn "$SERVICE_ARN" \
+            --primary-container "image=$ECR_REGISTRY/$ECR_REPOSITORY:$GITHUB_SHA,containerPort=1337" \
+            --monitor-resources DEPLOYMENT \
+            --monitor-mode TEXT-ONLY
       - name: Deploy frontend to Amplify
         env:
           AMPLIFY_APP_ID: ${{ vars.AWS_AMPLIFY_APP_ID }}

@@ -23,7 +23,7 @@ export default async function Home() {
   return (
     <>
       <Head>
-        <title>Anton Morgan – Projects</title>
+        <title>Anton Morgan - Projects</title>
         {/* Google Fonts: Montserrat for headings/nav, Open Sans for body */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
@@ -53,7 +53,7 @@ export default async function Home() {
       </main>
       <footer className={styles.footer}>
         <p>Anton Morgan</p>
-        <p>Senior Designer<br />UX and Embedded Software<br />Age 33</p>
+        <p>Senior Software Engineer<br />UX and Embedded Software</p>
         <p>&copy; {new Date().getFullYear()} All Rights Reserved</p>
       </footer>
     </>
