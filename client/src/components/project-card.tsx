@@ -1,17 +1,13 @@
-import React from 'react';
+import Image from 'next/image';
 import styles from './project-card.module.css';
-import { Project } from '../types';
+import type { Project } from '../lib/content/schema';
 
 interface Props {
   project: Project;
-  index?: number; // To alternate layout
+  index?: number;
 }
 
 const ProjectCard = ({ project, index = 0 }: Props) => {
-  const mainImage = project.Image?.[0];
-  const imageUrl = mainImage?.formats?.medium?.url || mainImage?.url;
-  const icons = project.Icons || [];
-  // Alternate layout for even/odd cards
   const isEven = index % 2 === 1;
 
   return (
@@ -19,40 +15,40 @@ const ProjectCard = ({ project, index = 0 }: Props) => {
       isEven ? `${styles.projectCard} ${styles.reverse}` : styles.projectCard
     }>
       <div className={styles.projectImage}>
-        {imageUrl && (
-          <img
-            src={imageUrl.startsWith('http') ? imageUrl : `http://localhost:1337${imageUrl}`}
-            alt={mainImage?.name || project.Title}
-            className={styles.tiltedImage}
-          />
-        )}
+        <Image
+          src={project.image.src}
+          alt={project.image.alt}
+          width={project.image.width}
+          height={project.image.height}
+          className={styles.tiltedImage}
+        />
       </div>
       <div className={styles.projectContent}>
-        <h3 className={styles.projectTitle}>{project.Title}</h3>
-        {project.Description?.map((block, i) => (
+        <h3 className={styles.projectTitle}>{project.title}</h3>
+        {project.description.map((paragraph, i) => (
           <p key={i} className={styles.projectDescription}>
-            {block.children?.map((child, j) => child.text).join(' ')}
+            {paragraph}
           </p>
         ))}
         <div className={styles.techIcons}>
-          {icons.map(icon => (
-            <img
-              key={icon.id}
-              src={icon.url.startsWith('http') ? icon.url : `http://localhost:1337${icon.url}`}
-              alt={icon.name}
+          {project.icons.map((icon) => (
+            <Image
+              key={icon.src}
+              src={icon.src}
+              alt={icon.alt}
               width={32}
               height={32}
             />
           ))}
         </div>
         <div className={styles.buttonRow}>
-          {project.MainURL && (
-            <a className={`${styles.button} ${styles.primaryButton}`} href={project.MainURL} target="_blank" rel="noreferrer">
+          {project.mainUrl && (
+            <a className={`${styles.button} ${styles.primaryButton}`} href={project.mainUrl} target="_blank" rel="noreferrer">
               Go To Project
             </a>
           )}
-          {project.CodeURL && (
-            <a className={styles.button} href={project.CodeURL} target="_blank" rel="noreferrer">
+          {project.codeUrl && (
+            <a className={styles.button} href={project.codeUrl} target="_blank" rel="noreferrer">
               Source Code
             </a>
           )}

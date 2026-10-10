@@ -1,41 +1,47 @@
 # antoncmorgan-website
 
-This website showcases and links to my personal work, including projects, blog posts, and other creative endeavors. It consists of two main parts:
+This website showcases personal projects as a static Next.js site. Content is stored in Git as JSON, so it has no CMS, database, API server, or runtime environment variables.
 
-- A Next.js frontend (in the `client/` folder) for the public-facing website.
-- A Strapi backend (in the `strapi/` folder) for managing content such as projects and blog posts.
+## Local development
 
-## Purpose
+```bash
+cd client
+npm ci
+npm run dev
+```
 
-The goal of this website is to provide a central hub for my portfolio, allowing visitors to explore my work and learn more about my skills and experience. The backend (Strapi) makes it easy to add and update content without modifying the frontend code.
+Visit <http://localhost:3000>. `npm run build` validates all content and produces the static export.
 
-## How to Run the Project
+## Content
 
-### 1. Start the Strapi Backend
+- Project files live in [`client/content/projects`](client/content/projects), with one JSON file per project.
+- Site-wide content lives in [`client/content/site.json`](client/content/site.json).
+- Project media lives in [`client/public/images/projects/<project-slug>`](client/public/images/projects).
+- [`client/src/lib/content/schema.ts`](client/src/lib/content/schema.ts) defines the Zod-validated project schema, and [`client/src/lib/content/projects.ts`](client/src/lib/content/projects.ts) is the only content access layer used by the UI.
 
-1. Run the following:
-   ```
-   cd strapi
-   npm install
-   npm run develop
-   ```
-   The Strapi admin panel will be available (usually at http://localhost:1337).
+Add a project by copying this minimal shape into `client/content/projects/<slug>.json`, adding its media under the matching public-images directory, then running `npm run build`:
 
-### 2. Start the Next.js Frontend
+```json
+{
+  "slug": "example-project",
+  "title": "Example Project",
+  "description": ["A concise description."],
+  "image": {
+    "src": "/images/projects/example-project/cover.webp",
+    "alt": "Example Project",
+    "width": 1200,
+    "height": 675
+  },
+  "icons": [],
+  "mainUrl": null,
+  "codeUrl": null
+}
+```
 
-1. 
-   ```
-   cd client
-   npm install
-   npm run dev
-   ```
-   The website will be available at http://localhost:3000.
+Edit an existing project by changing its JSON and local media. `featured` is optional and may be set to `true` for consumers of `getFeaturedProjects()`.
 
-### 3. Access the Website
-
-- Visit http://localhost:3000 to view the frontend.
-- Visit http://localhost:1337/admin to manage content in Strapi.
+Only the repository-tracked Archery Challenge image and icons were available to migrate. Its description, links, any additional projects, and the previous hero image were not present in Git or reachable from the configured Strapi endpoint, so they need to be copied from the former CMS into JSON and `public/images` before the CMS is decommissioned.
 
 ## Deployment
 
-- TBD
+Connect the repository's `main` branch to AWS Amplify Hosting with `client` as the application root. Each push to `main` causes Amplify to build and publish the static site; no AWS database, container, or runtime backend is required.
