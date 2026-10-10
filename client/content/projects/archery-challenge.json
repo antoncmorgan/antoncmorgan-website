@@ -1,0 +1,27 @@
+{
+  "slug": "archery-challenge",
+  "title": "Archery Challenge",
+  "description": [],
+  "image": {
+    "src": "/images/projects/archery-challenge/archery-challenge.png",
+    "alt": "Archery Challenge",
+    "width": 1920,
+    "height": 1040
+  },
+  "icons": [
+    {
+      "src": "/images/projects/archery-challenge/icons/blender-logo.svg",
+      "alt": "Blender"
+    },
+    {
+      "src": "/images/projects/archery-challenge/icons/babylon-logo.svg",
+      "alt": "Babylon.js"
+    },
+    {
+      "src": "/images/projects/archery-challenge/icons/vue-logo.svg",
+      "alt": "Vue.js"
+    }
+  ],
+  "mainUrl": null,
+  "codeUrl": null
+}
